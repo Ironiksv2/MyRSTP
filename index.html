@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML Fetcher</title>
+</head>
+<body>
+    <label for="resolution">Enter video resolution:</label>
+    <input type="text" id="resolution">
+    <button onclick="loadHTML()">Load HTML</button>
+    <div id="videoPlayer"></div>
+
+    <script>
+        function loadHTML() {
+            const url = 'https://raw.githubusercontent.com/Ironiksv2/MyRSTP/Rtsp/root/Rtsp.html';
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    const videoPlayerDiv = document.getElementById('videoPlayer');
+                    videoPlayerDiv.innerHTML = html;
+                    const resolution = document.getElementById('resolution').value;
+                    setVideoResolution(resolution);
+                })
+                .catch(error => {
+                    console.error('Failed to fetch HTML:', error);
+                });
+        }
+
+        function setVideoResolution(resolution) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoElement = videoPlayer.querySelector('video');
+            videoElement.style.width = resolution;
+        }
+    </script>
+</body>
+</html>
