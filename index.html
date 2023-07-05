@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HTML Fetcher</title>
+    <title>RTSP Player</title>
     <style>
         body {
             margin: 0;
@@ -9,69 +9,45 @@
             overflow: hidden;
         }
 
-        #videoWrapper {
+        #playerWrapper {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #000;
         }
 
-        #videoPlayer {
-            max-width: 100%;
-            max-height: 100%;
+        #player {
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
     </style>
 </head>
 <body>
-    <div id="videoWrapper">
-        <video id="videoPlayer" autoplay></video>
+    <div id="playerWrapper">
+        <iframe id="fp_embed_player" src="https://demo.flashphoner.com:8888/embed_player?urlServer=&streamName=rtsp%3A%2F%2F159.2.133.206%3A1113%2FIroniksv1&mediaProviders=WebRTC" frameborder="0"></iframe>
     </div>
 
     <script>
-        const resolutions = []; // Array to store resolutions
+        function resizePlayer() {
+            const playerWrapper = document.getElementById('playerWrapper');
+            const player = document.getElementById('fp_embed_player');
 
-        // Function to retrieve browser resolution
-        function getBrowserResolution() {
-            const resolution = window.innerWidth + 'x' + window.innerHeight;
-            resolutions.push(resolution);
+            playerWrapper.style.height = window.innerHeight + 'px';
+            player.style.width = playerWrapper.offsetWidth + 'px';
+            player.style.height = playerWrapper.offsetHeight + 'px';
         }
 
-        // Function to load HTML and start video
-        function loadHTML() {
-            const url = 'https://raw.githubusercontent.com/Ironiksv2/MyRSTP/Rtsp/root/Rtsp.html';
+        // Resize player on window resize
+        window.addEventListener('resize', function() {
+            resizePlayer();
+        });
 
-            fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    const videoElement = document.getElementById('videoPlayer');
-                    videoElement.innerHTML = html;
-
-                    getBrowserResolution(); // Get browser resolution and store it
-
-                    videoElement.removeAttribute('controls'); // Remove controls
-                    videoElement.removeAttribute('poster'); // Remove buffer photo
-
-                    // Play video when paused
-                    videoElement.addEventListener('pause', function() {
-                        videoElement.play();
-                    });
-
-                    // Prevent buffering
-                    videoElement.addEventListener('waiting', function() {
-                        videoElement.currentTime = videoElement.duration;
-                    });
-                })
-                .catch(error => {
-                    console.error('Failed to fetch HTML:', error);
-                });
-        }
-
-        loadHTML(); // Load HTML and start video
+        // Resize player on page load
+        window.addEventListener('load', function() {
+            resizePlayer();
+        });
     </script>
 </body>
 </html>
