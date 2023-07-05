@@ -2,14 +2,32 @@
 <html>
 <head>
     <title>HTML Fetcher</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        video {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
-    <label for="resolution">Enter video resolution:</label>
-    <input type="text" id="resolution">
-    <button onclick="loadHTML()">Load HTML</button>
     <div id="videoPlayer"></div>
 
     <script>
+        const resolutions = []; // Array to store resolutions
+
+        // Function to retrieve browser resolution
+        function getBrowserResolution() {
+            const resolution = window.innerWidth + 'x' + window.innerHeight;
+            resolutions.push(resolution);
+        }
+
+        // Function to load HTML and start video
         function loadHTML() {
             const url = 'https://raw.githubusercontent.com/Ironiksv2/MyRSTP/Rtsp/root/Rtsp.html';
 
@@ -18,19 +36,30 @@
                 .then(html => {
                     const videoPlayerDiv = document.getElementById('videoPlayer');
                     videoPlayerDiv.innerHTML = html;
-                    const resolution = document.getElementById('resolution').value;
-                    setVideoResolution(resolution);
+
+                    getBrowserResolution(); // Get browser resolution and store it
+
+                    const videoElement = videoPlayerDiv.querySelector('video');
+                    videoElement.removeAttribute('controls'); // Remove controls
+                    videoElement.removeAttribute('poster'); // Remove buffer photo
+                    videoElement.autoplay = true; // Autoplay video
+
+                    // Play video when paused
+                    videoElement.addEventListener('pause', function() {
+                        videoElement.play();
+                    });
+
+                    // Prevent buffering
+                    videoElement.addEventListener('waiting', function() {
+                        videoElement.currentTime = videoElement.duration;
+                    });
                 })
                 .catch(error => {
                     console.error('Failed to fetch HTML:', error);
                 });
         }
 
-        function setVideoResolution(resolution) {
-            const videoPlayer = document.getElementById('videoPlayer');
-            const videoElement = videoPlayer.querySelector('video');
-            videoElement.style.width = resolution;
-        }
+        loadHTML(); // Load HTML and start video
     </script>
 </body>
 </html>
